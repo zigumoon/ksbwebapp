@@ -3,7 +3,7 @@
 ## WAR Packaging
 
 ```bash
-mvn package
+mvn clean package
 ```
 
 ## Deploy WAR Package
