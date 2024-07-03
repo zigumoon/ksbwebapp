@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'https://github.com/zigumoon/ksbwebapp')], contextPath: null, war: 'path/to/war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'https://github.com/zigumoon/ksbwebapp')], contextPath: null, war: 'target/hello-world.war'
             }
         }
     }
