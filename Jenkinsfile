@@ -20,7 +20,7 @@ pipeline {
             steps {
                 sh 'mvn clean package -Dmaven.test.skip=true'
             }
-        }ls
+        }
         stage('Test') {
           // Maven을 사용하여 테스트를 수행합니다.
             steps {
