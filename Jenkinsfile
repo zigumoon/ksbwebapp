@@ -9,22 +9,22 @@ pipeline {
             stage('Checkout') {
                 steps {
                     git branch: 'main', 
-                    url: '<URL>'
+                    url: 'https://github.com/zigumoon/ksbwebapp'
                 }
             }
         stage('Build') {
             steps {
-                sh '<COMMAND>'
+                sh 'mvn clean package'
             }
         }
         stage('Test') {
             steps {
-                sh '<COMMAND>'
+                sh 'mvn test'
             }
         }
         stage('Deploy') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: '<NAME>', url: '<URL>')], contextPath: null, war: 'path/to/war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'https://github.com/zigumoon/ksbwebapp')], contextPath: null, war: 'path/to/war'
             }
         }
     }
