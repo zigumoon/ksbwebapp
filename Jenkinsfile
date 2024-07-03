@@ -1,20 +1,21 @@
 pipeline {
     agent any
-
+    
     triggers {
         pollSCM('* * * * *')
         }
 
-        stages {
-            stage('Checkout') {
-                steps {
-                    git branch: 'main', 
-                    url: 'https://github.com/zigumoon/ksbwebapp'
-                }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', 
+                url: 'https://github.com/zigumoon/ksbwebapp'
             }
+        }
+
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -Dmaven.test.skip=true'
             }
         }
         stage('Test') {
@@ -24,7 +25,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'https://github.com/zigumoon/ksbwebapp')], contextPath: null, war: 'target/hello-world.war'
+                deploy adapters: [tomcat9(path: '', url: 'http://192.168.56.102:8080/')], contextPath: null, war: 'target/hello-world.war'
             }
         }
     }

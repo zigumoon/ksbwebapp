@@ -3,7 +3,7 @@
 ## WAR Packaging
 
 ```bash
-mvn test
+
 mvn clean package
 ```
 
