@@ -1,0 +1,63 @@
+pipeline {
+    agent none
+
+    stages {
+        stage('Git Checkout') {
+            agent any
+            steps {
+                git branch: 'main', url: 'https://github.com/zigumoon/ksbwebapp'
+            }
+        }
+        stage('Maven Build') {
+            agent {
+                docker 'maven:3-openjdk-17'
+            }
+            steps {
+                sh 'mvn package -DskipTests=true'
+            }
+        }
+        stage('Maven Test') {
+            agent {
+                docker 'maven:3-openjdk-17'
+            }
+            steps {
+                sh 'mvn test'
+            }           
+        }
+        stage('Docker Image Build') {
+            agent any
+            steps {
+                sh 'docker image build -t mywebapp .'
+            }
+        }
+        stage('Docker Image Tag') {
+            agent any
+            steps {
+                sh 'docker image tag mywebapp zigumoon/ksbwebapp:latest'
+                sh 'docker image tag mywebapp zigumoon/ksbwebapp:$BUILD_NUMBER'
+            }
+            
+        }
+        stage('Docker Image Push to Docker Hub') {
+            agent any
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-token',
+                    url: 'https://index.docker.io/v1/') {
+                    sh 'docker image push zigumoon/ksbwebapp:latest'
+                    sh 'docker image push zigumoon/ksbwebapp:$BUILD_NUMBER'
+                }
+            }
+        }
+        stage('Docker Container Deploy to Docker Out of Docker') {
+            agent {
+                docker {
+                    image: 'ghcr.io/c1t1d0s7/jenkins-ansible-agent'
+                    args: '-u 0:0 -e DOCKER_HOST=tcp://192.168.56.104:2375'
+                }
+            }
+            steps {
+                ansiblePlaybook playbook: 'docker-container-deploy.yaml'
+            }
+        }
+    }
+}
