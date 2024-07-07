@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label "jenkins-node-ssh"
+        label "jenkins-node"
     }
     
     triggers {
